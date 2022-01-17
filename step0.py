@@ -12,11 +12,10 @@ and so it may overfit
 """
 
 import os
-from copy import deepcopy
 import pandas as pd
 from pprint import pprint
+import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
-
 from sklearn.linear_model import LogisticRegression
 
 
@@ -84,8 +83,13 @@ from sklearn.metrics import balanced_accuracy_score, make_scorer
 from sklearn.model_selection import LeaveOneOut
 
 scorer = make_scorer(balanced_accuracy_score)
-pprint(cross_validate(model, X, labels_impact, scoring=scorer))
-pprint(cross_validate(model, X, labels_impact, cv=LeaveOneOut()))
+rez1 = cross_validate(model, X, labels_impact, scoring=scorer)
+pprint(rez1)
+pprint(np.mean(rez1['test_score']))
+rez2 = cross_validate(model, X, labels_impact, cv=LeaveOneOut())
+pprint(rez2)
+pprint(np.mean(rez2['test_score']))
+
 
 
 
