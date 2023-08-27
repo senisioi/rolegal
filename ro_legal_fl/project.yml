@@ -1,0 +1,342 @@
+title: "Train pipeline Romanian with floret and without"
+description: "Train floret vectors on MARCELL corpus and compare standard vectors vs. floret vectors on UD Romanian and ronec corpora."
+spacy_version: ">=3.2.0,<4.0.0"
+# Variables can be referenced across the project.yml using ${vars.var_name}
+vars:
+  name: "floret_ro_legal"
+  lang: "ro"
+  text_dataset: "marcell_clean"
+  vector_size: 100000
+  vector_dim: 280
+  n_process: 40
+  minn: 4
+  maxn: 5
+  max_steps: 100000
+  treebank: "UD_Romanian-RRT"
+  train_name: "ro_rrt-ud-train"
+  dev_name: "ro_rrt-ud-dev"
+  test_name: "ro_rrt-ud-test"
+  corpus_ner: "ronec"
+  final_corpus_ner: "ner_corpus_combined"
+  gpu_id: -1
+  floret_config: "${vars.text_dataset}.dim${vars.vector_dim}.minCount50.n${vars.minn}-${vars.maxn}.neg10.modeFloret.hashCount2.bucket${vars.vector_size}"
+  trained_vectors_path: "vectors/${vars.floret_config}"
+  spacy_trained_vectors_path: "${vars.trained_vectors_path}/spacy_format"
+  parser_tagger_dir: "training/${vars.treebank}.${vars.floret_config}"
+  parser_tagger_best: "training/${vars.treebank}.${vars.floret_config}/model-best"
+  parser_tagger_ner_dir: "training/complete.${vars.floret_config}"
+  parser_tagger_ner_best: "training/complete.${vars.floret_config}/model-best"
+  parser_tagger_novec_dir: "training/${vars.treebank}-novectors"  
+  parser_tagger_novec_best: "training/${vars.treebank}-novectors/model-best" #"ro_core_news_lg" 
+  parser_tagger_ner_novec_dir: "training/${vars.final_corpus_ner}-novectors" 
+  parser_tagger_ner_novec_best: "training/${vars.final_corpus_ner}-novectors/model-best" #"ro_core_news_lg"
+  package_name_fl: legal_fl
+  package_name_sm: legal_sm
+  version: 0.1.0
+
+# These are the directories that the project needs. The project CLI will make
+# sure that they always exist.
+directories: ["assets", "corpus", "training", "metrics", "training", "vectors"]
+
+# Assets that should be downloaded or available in the directory. We're shipping
+# them with the project, so they won't have to be downloaded.
+assets:
+  - dest: "assets/floret.tar.gz"
+    url: "https://github.com/scrapperorg/nlp-resources/releases/download/floret_v1/floret_legal_5_6.tar.gz"
+  - dest: "assets/legalnero.zip"
+    url: "https://zenodo.org/record/7025333/files/legalnero.zip"
+  - dest: "assets/${vars.treebank}"
+    git:
+      repo: "https://github.com/UniversalDependencies/${vars.treebank}"
+      branch: "master"
+      path: ""
+  - dest: "assets/${vars.corpus_ner}"
+    git:
+      repo: "https://github.com/dumitrescustefan/ronec"
+      branch: "master"
+      path: ""
+
+## Workflows are sequences of commands (see below) executed in order. You can
+## run them via "spacy project run [workflow]". If a commands's inputs/outputs
+## haven't changed, it won't be re-run.
+workflows:
+  either-train-embeddings:
+    - download-marcell
+    - train-floret-marcell
+  either-download-embeddings:
+    - untar-vectors
+  all:
+    - init-floret-vectors
+    - convert-treebank
+    - init-labels
+    - train-floret
+    - evaluate
+    - convert-legalnero
+    - convert-ronec
+    - join-legalnero-ronec
+    - convert-ner
+    - init-labels-ner
+    - train-floret-ner
+    - evaluate-ner
+    - package
+
+  all-novectors:
+    - convert-treebank
+    - init-labels
+    - train-novectors
+    - evaluate-novectors
+    - convert-legalnero
+    - convert-ronec
+    - join-legalnero-ronec
+    - convert-ner
+    - init-labels-ner
+    - train-novectors-ner
+    - evaluate-novectors-ner
+    - package-novectors
+
+
+
+# Project commands, specified in a style similar to CI config files (e.g. Azure
+# pipelines). The name is the command name that lets you trigger the command
+# via "spacy project run [command] [path]". The help message is optional and
+# shown when executing "spacy project run [optional command] [path] --help".
+commands:
+  - name: "download-marcell"
+    help: "Download preprocessed MARCELL legislative corpus"
+    script:
+      - "wget https://github.com/scrapperorg/nlp-resources/releases/download/legal_corpus_v1/MARCELL_Corpus_cln_tok.tar.gz -P assets/"
+      - "cd assets/ && tar -xvf MARCELL_Corpus_cln_tok.tar.gz"
+    outputs:
+      - "assets/MARCELL_Corpus_clean_tokenized.txt"
+
+  - name: "train-floret-marcell"
+    help: "Train new floret vectors from scratch on MARCELL legislative corpus"
+    script:
+      - "mkdir -p ${vars.trained_vectors_path}"
+      - "./floret/floret cbow -dim ${vars.vector_dim} -minn ${vars.minn} -maxn ${vars.maxn} -mode floret -hashCount 2 -bucket ${vars.vector_size} -input assets/MARCELL_Corpus_clean_tokenized.txt -output ${vars.trained_vectors_path}/vectors -thread ${vars.n_process}"
+    outputs:
+      - "${vars.trained_vectors_path}"
+
+  - name: "ro_core_lg"
+    help: "Download ro core news lg for comparison"
+    script:
+      - "python -m spacy download ro_core_news_lg"
+
+  - name: "untar-vectors"
+    help: "Untar pre-downloaded floret vectors model from the assets"
+    script:
+      - "tar -xvf assets/floret.tar.gz -C assets/"
+      - "mv assets/default ${vars.trained_vectors_path}"
+    deps:
+      - "assets/floret.tar.gz"
+    outputs:
+      - "${vars.trained_vectors_path}"
+
+  - name: "init-floret-vectors"
+    help: "Create a floret vectors model"
+    script:
+      - "spacy init vectors ro ${vars.trained_vectors_path}/vectors.floret ${vars.spacy_trained_vectors_path} --mode floret"
+    deps:
+      - "${vars.trained_vectors_path}/vectors.floret"
+    outputs:
+      - "${vars.spacy_trained_vectors_path}"
+
+  - name: "convert-treebank"
+    help: "Convert the treebank data to spaCy's format"
+    script:
+      - "mkdir -p corpus/${vars.treebank}"
+      - "python -m spacy convert assets/${vars.treebank}/${vars.train_name}.conllu corpus/${vars.treebank}/ --n-sents 10"
+      - "mv corpus/${vars.treebank}/${vars.train_name}.spacy corpus/${vars.treebank}/train.spacy"
+      - "python -m spacy convert assets/${vars.treebank}/${vars.dev_name}.conllu corpus/${vars.treebank}/ --n-sents 10"
+      - "mv corpus/${vars.treebank}/${vars.dev_name}.spacy corpus/${vars.treebank}/dev.spacy"
+      - "python -m spacy convert assets/${vars.treebank}/${vars.test_name}.conllu corpus/${vars.treebank}/ --n-sents 10"
+      - "mv corpus/${vars.treebank}/${vars.test_name}.spacy corpus/${vars.treebank}/test.spacy"
+    deps:
+      - "assets/${vars.treebank}/"
+    outputs:
+      - "corpus/${vars.treebank}/train.spacy"
+      - "corpus/${vars.treebank}/dev.spacy"
+      - "corpus/${vars.treebank}/test.spacy"
+
+  - name: "init-labels"
+    help: "Init labels for faster training"
+    script:
+      - "rm -rf corpus/labels/tagger.json"
+      - "rm -rf corpus/labels/parser.json"
+      - "rm -rf corpus/labels/lemmatizer.json"
+      - "python -m spacy init labels configs/ro_legal.cfg corpus/labels --paths.train corpus/${vars.treebank}/train.spacy --paths.dev corpus/${vars.treebank}/dev.spacy"
+    deps:
+      - "configs/ro_legal.cfg"
+      - "corpus/${vars.treebank}/train.spacy"
+      - "corpus/${vars.treebank}/dev.spacy"
+    outputs:
+      - "corpus/labels"
+
+  - name: "train-floret"
+    help: "Train the model with floret vectors"
+    script:
+      - "python -m spacy train configs/ro_legal.cfg --output ${vars.parser_tagger_dir} --paths.train corpus/${vars.treebank}/train.spacy --paths.dev corpus/${vars.treebank}/dev.spacy --gpu-id ${vars.gpu_id} --initialize.vectors ${vars.spacy_trained_vectors_path} --training.max_steps ${vars.max_steps}"
+    deps:
+      - "configs/ro_legal.cfg"
+      - "corpus/${vars.treebank}/train.spacy"
+      - "corpus/${vars.treebank}/dev.spacy"
+      - "${vars.spacy_trained_vectors_path}/"
+    outputs:
+      - "${vars.parser_tagger_dir}"
+
+  - name: "evaluate"
+    help: "Evaluate the models and export metrics"
+    script:
+      - "mkdir -p metrics/${vars.treebank}-novectors"
+      - "python -m spacy evaluate ${vars.parser_tagger_novec_best} corpus/${vars.treebank}/test.spacy --output metrics/${vars.treebank}-novectors/metrics.json --gpu-id ${vars.gpu_id}"
+      - "mkdir -p metrics/${vars.treebank}-floret"
+      - "python -m spacy evaluate ${vars.parser_tagger_best} corpus/${vars.treebank}/test.spacy --output metrics/${vars.treebank}-floret/metrics.json --gpu-id ${vars.gpu_id}"
+    deps:
+      - "corpus/${vars.treebank}/test.spacy"
+      - "${vars.parser_tagger_best}"
+    outputs:
+      - "metrics/${vars.treebank}-novectors/metrics.json"
+      - "metrics/${vars.treebank}-floret/metrics.json"
+
+  - name: "convert-legalnero"
+    help: "Convert the data to spaCy's format"
+    deps:
+      - "assets/legalnero.zip"
+    script:
+      - "rm -rf assets/legalnero"
+      - "mkdir -p assets/legalnero"
+      - "unzip assets/legalnero.zip -d assets/legalnero"
+      - "python scripts/convert_LegalNERo_to_conll.py assets/legalnero/conllup_LEGAL_PER_LOC_ORG_TIME assets/legalnero"
+
+  - name: "convert-ronec"
+    help: "Convert the ronec data to conll ingestible by spacy"
+    script:
+      - "python scripts/convert_ronec_to_conll.py assets/${vars.corpus_ner}/data/train.json assets/${vars.corpus_ner}/train.tsv"
+      - "python scripts/convert_ronec_to_conll.py assets/${vars.corpus_ner}/data/test.json assets/${vars.corpus_ner}/test.tsv"
+      - "python scripts/convert_ronec_to_conll.py assets/${vars.corpus_ner}/data/valid.json assets/${vars.corpus_ner}/dev.tsv"
+
+  - name: "join-legalnero-ronec"
+    help: "Combine legalnero and ronec"
+    script:
+      - "mkdir -p assets/${vars.final_corpus_ner}"
+      - bash -c "cat assets/${vars.corpus_ner}/train.tsv assets/legalnero/train.tsv > assets/${vars.final_corpus_ner}/train.tsv"
+      - bash -c "cat assets/${vars.corpus_ner}/test.tsv assets/legalnero/test.tsv > assets/${vars.final_corpus_ner}/test.tsv"
+      - bash -c "cat assets/${vars.corpus_ner}/dev.tsv assets/legalnero/dev.tsv > assets/${vars.final_corpus_ner}/dev.tsv"
+      - echo "Final corpus for ner in ${vars.final_corpus_ner}"
+
+  - name: "convert-ner"
+    help: "Convert combined legalnero and ronec for spacy internal format"
+    script:
+      - "mkdir -p corpus/${vars.final_corpus_ner}"
+      - "python -m spacy convert assets/${vars.final_corpus_ner}/test.tsv corpus/${vars.final_corpus_ner}/ -c ner --n-sents 10"
+      - "python -m spacy convert assets/${vars.final_corpus_ner}/dev.tsv corpus/${vars.final_corpus_ner}/ -c ner --n-sents 10"
+      - "python -m spacy convert assets/${vars.final_corpus_ner}/train.tsv corpus/${vars.final_corpus_ner}/ -c ner --n-sents 10"
+    deps:
+      - "assets/${vars.final_corpus_ner}/"
+    outputs:
+      - "corpus/${vars.final_corpus_ner}/train.spacy"
+      - "corpus/${vars.final_corpus_ner}/valid.spacy"
+      - "corpus/${vars.final_corpus_ner}/test.spacy"
+
+  - name: "init-labels-ner"
+    help: "Init labels for faster training"
+    script:
+      - "rm -rf corpus/labels/ner.json"
+      - "python -m spacy init labels configs/ro_legal_ner_simple.cfg corpus/labels --paths.train corpus/${vars.final_corpus_ner}/train.spacy --paths.dev corpus/${vars.final_corpus_ner}/dev.spacy  "
+    deps:
+      - "configs/ro_legal_ner.cfg"
+      - "corpus/${vars.final_corpus_ner}/train.spacy"
+      - "corpus/${vars.final_corpus_ner}/dev.spacy"
+    outputs:
+      - "corpus/labels/ner.json"
+
+  - name: "train-floret-ner"
+    help: "Train the NER model with floret vectors"
+    script:
+      - "python -m spacy train configs/ro_legal_ner.cfg --output ${vars.parser_tagger_ner_dir} --paths.train corpus/${vars.final_corpus_ner}/train.spacy --paths.dev corpus/${vars.final_corpus_ner}/dev.spacy --gpu-id ${vars.gpu_id} --initialize.vectors ${vars.spacy_trained_vectors_path} --paths.parser_tagger_path ${vars.parser_tagger_best} --training.max_steps ${vars.max_steps}"
+    deps:
+      - "configs/ro_legal.cfg"
+      - "corpus/${vars.final_corpus_ner}/train.spacy"
+      - "corpus/${vars.final_corpus_ner}/dev.spacy"
+      - "${vars.spacy_trained_vectors_path}/"
+      - "${vars.parser_tagger_best}"
+    outputs:
+      - "${vars.parser_tagger_ner_dir}"
+
+  - name: "evaluate-ner"
+    help: "Evaluate the models and export metrics"
+    script:
+      - "mkdir -p metrics/${vars.final_corpus_ner}-floret"
+      - "python -m spacy evaluate ${vars.parser_tagger_ner_best} corpus/${vars.final_corpus_ner}/test.spacy --output metrics/${vars.final_corpus_ner}-floret/metrics.json --gpu-id ${vars.gpu_id}"
+    deps:
+      - "corpus/${vars.final_corpus_ner}/test.spacy"
+      - "${vars.parser_tagger_ner_best}"
+    outputs:
+      - "metrics/${vars.parser_tagger_ner_dir}/metrics.json"
+
+  - name: "package"
+    help: "Package the complete trained model as a pip package"
+    script:
+      - "mkdir -p packages/"
+      - "python -m spacy package ${vars.parser_tagger_ner_best} packages/ --force  --name ${vars.package_name_fl} --version ${vars.version} --build wheel,sdist"
+    deps:
+      - "${vars.parser_tagger_ner_best}"
+    outputs_no_cache:
+      - "packages/${vars.package_name_fl}/"
+
+
+
+# train evaluate a model with no vectors
+
+  - name: "train-novectors"
+    help: "Train the model without vectors"
+    script:
+      - "python -m spacy train configs/ro_legal.cfg --output ${vars.parser_tagger_novec_dir} --paths.train corpus/${vars.treebank}/train.spacy --paths.dev corpus/${vars.treebank}/dev.spacy --gpu-id ${vars.gpu_id} --initialize.vectors null --components.tok2vec.model.embed.include_static_vectors false --training.max_steps ${vars.max_steps}"
+    deps:
+      - "configs/ro_legal.cfg"
+      - "corpus/${vars.treebank}/train.spacy"
+      - "corpus/${vars.treebank}/dev.spacy"
+    outputs:
+      - "${vars.parser_tagger_novec_dir}"
+
+  - name: "evaluate-novectors"
+    help: "Evaluate the models and export metrics"
+    script:
+      - "mkdir -p metrics/${vars.treebank}-novectors"
+      - "python -m spacy evaluate ${vars.parser_tagger_novec_best} corpus/${vars.treebank}/test.spacy --output metrics/${vars.treebank}-novectors/metrics.json --gpu-id ${vars.gpu_id}"
+    deps:
+      - "corpus/${vars.treebank}/test.spacy"
+      - "${vars.parser_tagger_best}"
+    outputs:
+      - "metrics/${vars.treebank}-novectors/metrics.json"
+
+  - name: "train-novectors-ner"
+    help: "Train the model without vectors"
+    script:
+      - "python -m spacy train configs/ro_legal_ner.cfg --output ${vars.parser_tagger_ner_novec_dir} --paths.train corpus/${vars.final_corpus_ner}/train.spacy --paths.dev corpus/${vars.final_corpus_ner}/dev.spacy --paths.parser_tagger_path ${vars.parser_tagger_novec_best} --gpu-id ${vars.gpu_id} --initialize.vectors null --components.tok2vec.model.embed.include_static_vectors false --training.max_steps ${vars.max_steps}"
+    deps:
+      - "configs/ro_legal_ner.cfg"
+      - "corpus/${vars.final_corpus_ner}/train.spacy"
+      - "corpus/${vars.final_corpus_ner}/dev.spacy"
+    outputs:
+      - "${vars.parser_tagger_novec_best}"
+
+  - name: "evaluate-novectors-ner"
+    help: "Evaluate the models and export metrics"
+    script:
+      - "mkdir -p metrics/${vars.final_corpus_ner}-novectors"
+      - "python -m spacy evaluate ${vars.parser_tagger_ner_novec_best} corpus/${vars.final_corpus_ner}/test.spacy --output metrics/${vars.final_corpus_ner}-novectors/metrics.json --gpu-id ${vars.gpu_id}"
+    deps:
+      - "${vars.parser_tagger_ner_novec_best}"
+    outputs:
+      - "metrics/${vars.final_corpus_ner}-novectors/metrics.json"
+
+  - name: "package-novectors"
+    help: "Package the complete trained model as a pip package"
+    script:
+      - "mkdir -p packages/"
+      - "python -m spacy package ${vars.parser_tagger_ner_novec_best} packages/ --force  --name ${vars.package_name_sm} --version ${vars.version} --build wheel,sdist"
+    deps:
+      - "${vars.parser_tagger_ner_novec_best}"
+    outputs_no_cache:
+      - "packages/${vars.package_name_sm}/"
