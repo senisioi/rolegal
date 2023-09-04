@@ -187,15 +187,12 @@ commands:
   - name: "evaluate"
     help: "Evaluate the models and export metrics"
     script:
-      - "mkdir -p metrics/${vars.treebank}-novectors"
-      - "python -m spacy evaluate ${vars.parser_tagger_novec_best} corpus/${vars.treebank}/test.spacy --output metrics/${vars.treebank}-novectors/metrics.json --gpu-id ${vars.gpu_id}"
       - "mkdir -p metrics/${vars.treebank}-floret"
       - "python -m spacy evaluate ${vars.parser_tagger_best} corpus/${vars.treebank}/test.spacy --output metrics/${vars.treebank}-floret/metrics.json --gpu-id ${vars.gpu_id}"
     deps:
       - "corpus/${vars.treebank}/test.spacy"
       - "${vars.parser_tagger_best}"
     outputs:
-      - "metrics/${vars.treebank}-novectors/metrics.json"
       - "metrics/${vars.treebank}-floret/metrics.json"
 
   - name: "convert-legalnero"

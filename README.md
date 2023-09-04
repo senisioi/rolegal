@@ -37,16 +37,17 @@ An example of using floret vectors to identify similar legal terms can be visibl
 
 | Query word?                 | Similar Word          | Similarity Score |
 |-----------------------------|-----------------------|------------------|
-| sectoriale                  | sectorial             | 0.91564          |
-|                            | sectoriale            | 0.915279         |
-|                            | transsectoriale       | 0.901447         |
-|                            | subsectoriale         | 0.898561         |
-|                            | naționale/sectoriale  | 0.881749         |
-|                            | multisectoriale       | 0.869202         |
-|                            | publice/sectoriale    | 0.863173         |
-|                            | publică/sectoriale    | 0.844522         |
-|                            | intersectoriale       | 0.84431          |
-|                            | intrasectoriale/intersectoriale | 0.841589 |
+| sectoriale                  |                      |         |
+|                            |sectorial/sectoriale | 0.91564|
+|                            |sectoriale/intersectoriale | 0.915279|
+|                            |transsectoriale | 0.901447|
+|                            |subsectoriale | 0.898561|
+|                            |naționale/sectoriale | 0.881749|
+|                            |multisectoriale | 0.869202|
+|                            |publice/sectoriale | 0.863173|
+|                            |publică/sectoriale | 0.844522|
+|                            |intersectoriale | 0.84431|
+|                            |intrasectoriale/intersectoriale | 0.841589|
 
 
 
@@ -83,7 +84,7 @@ The second command will run the training pipeline where each action is defined i
 12.	evaluate the model on the test set
 13.	package everything into a wheel
 
-At the end, in the packages directory a wheel will be created named ro_legal_fl that can be installed using pip as an individual package.
+This will take a lot of time, so please be patient. At the end, in the packages directory a wheel will be created named ro_legal_fl that can be installed using pip as an individual package.
 
 
 
