@@ -9,7 +9,7 @@ jobs:
       strategy:
         fail-fast: false
         matrix:
-          os: [ubuntu-20.04]
+          os: [ubuntu-22.04]
       steps:
         - name: Checkout
           uses: actions/checkout@v2
@@ -23,7 +23,57 @@ jobs:
               python -m spacy project run all
 
         - name: Upload
-          uses: actions/upload-artifact@v2
+          uses: actions/upload-artifact@v3
           with:
-            name: wheels
+            name: linux.whl
+            path: ro_legal_fl/packages/ro_legal_fl-0.1.0/dist/*.whl
+
+    build_mac_wheels:
+      name: Build Mac wheels
+      runs-on: ${{ matrix.os }}
+      strategy:
+        fail-fast: false
+        matrix:
+          os: [macos-latest]
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v2
+
+        - name: Build wheels
+          run: |
+              cd ro_legal_fl && \
+              pip install -r requirements.txt && \
+              python -m spacy project assets && \
+              python -m spacy project run either-download-embeddings && \
+              python -m spacy project run all
+
+        - name: Upload
+          uses: actions/upload-artifact@v3
+          with:
+            name: mac.whl
+            path: ro_legal_fl/packages/ro_legal_fl-0.1.0/dist/*.whl
+
+    build_win_wheels:
+      name: Build Windows wheels
+      runs-on: ${{ matrix.os }}
+      strategy:
+        fail-fast: false
+        matrix:
+          os: [windows-latest]
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v2
+
+        - name: Build wheels
+          run: |
+              cd ro_legal_fl && \
+              pip install -r requirements.txt && \
+              python -m spacy project assets && \
+              python -m spacy project run either-download-embeddings && \
+              python -m spacy project run all
+
+        - name: Upload
+          uses: actions/upload-artifact@v3
+          with:
+            name: win.whl
             path: ro_legal_fl/packages/ro_legal_fl-0.1.0/dist/*.whl
