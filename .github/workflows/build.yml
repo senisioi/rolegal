@@ -18,7 +18,7 @@ jobs:
           run: |
               cd ro_legal_fl && \
               pip install -r requirements.txt && \
-              python -m spacy project run all either-download-embeddings && \
+              python -m spacy project run either-download-embeddings && \
               python -m spacy project assets && \
               python -m spacy project run all
 
