@@ -11,6 +11,9 @@ jobs:
         matrix:
           os: [ubuntu-20.04]
       steps:
+        - name: Checkout
+          uses: actions/checkout@v2
+
         - name: Build wheels
           run: |
               cd ro_legal_fl && \
@@ -18,7 +21,9 @@ jobs:
               python -m spacy project run all either-download-embeddings && \
               python -m spacy project assets && \
               python -m spacy project run all
-        - uses: actions/upload-artifact@v2
+
+        - name: Upload
+          uses: actions/upload-artifact@v2
           with:
             name: wheels
             path: ro_legal_fl/packages/ro_legal_fl-0.1.0/dist/*.whl
