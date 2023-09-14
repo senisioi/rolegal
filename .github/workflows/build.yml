@@ -18,6 +18,7 @@ jobs:
           run: |
               cd ro_legal_fl && \
               pip3 install -r requirements.txt && \
+              python3 scripts/set_spacy_version.py && \
               python3 -m spacy project assets && \
               python3 -m spacy project run either-download-embeddings && \
               python3 -m spacy project run all
@@ -26,7 +27,7 @@ jobs:
           uses: actions/upload-artifact@v3
           with:
             name: mac.whl
-            path: ro_legal_fl/packages/ro_legal_fl-0.1.0/dist/*.whl
+            path: ro_legal_fl/packages/*/dist/*.whl
 
     build_linux_wheels:
       name: Build linux wheels
@@ -43,6 +44,7 @@ jobs:
           run: |
               cd ro_legal_fl && \
               pip3 install -r requirements.txt && \
+              python3 scripts/set_spacy_version.py && \
               python3 -m spacy project assets && \
               python3 -m spacy project run either-download-embeddings && \
               python3 -m spacy project run all
@@ -51,7 +53,7 @@ jobs:
           uses: actions/upload-artifact@v3
           with:
             name: linux.whl
-            path: ro_legal_fl/packages/ro_legal_fl-0.1.0/dist/*.whl
+            path: ro_legal_fl/packages/*/dist/*.whl
 
     build_win_wheels:
       name: Build Windows wheels
@@ -68,6 +70,7 @@ jobs:
           run: |
               cd ro_legal_fl && 
               pip3 install -r requirements.txt && 
+              python3 scripts/set_spacy_version.py && 
               python3 -m spacy project assets && 
               python3 -m spacy project run either-download-embeddings && 
               python3 -m spacy project run all
@@ -76,4 +79,4 @@ jobs:
           uses: actions/upload-artifact@v3
           with:
             name: win.whl
-            path: ro_legal_fl/packages/ro_legal_fl-0.1.0/dist/*.whl
+            path: ro_legal_fl/packages/*/dist/*.whl

@@ -29,9 +29,10 @@ python -m spacy project run either-train-embeddings
 Which will run several shell scripts defined in `project.yml` to download the corpus and start floret training. If the user does not want to train embeddings from scratch, but use the ones that we release within a spaCy package, then they may execute the following command instead: `python -m spacy project run either-download-embeddings`.
 
 ## Downloading pre-trained floret Embeddigns for Romanian
-We provide pre-trained embeddings that can be used with the pipeline.
+We provide pre-trained embeddings that can be used with the pipeline. The embeddings are downloaded with the assets:
 ```bash
-python -m spacy project run all either-download-embeddings
+python -m spacy project assets
+python -m spacy project run either-download-embeddings
 ```
 
 ### Example of using floret nearest-neighbors

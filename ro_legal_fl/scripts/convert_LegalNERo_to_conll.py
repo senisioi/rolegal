@@ -5,13 +5,14 @@ import random
 # global.columns = ID FORM LEMMA UPOS XPOS FEATS HEAD DEPREL DEPS MISC RELATE:NE RELATE:GEONAMES
 mapping = {"B-PER": "B-PERSON", "I-PER": "I-PERSON", "B-TIME": "B-DATETIME", "I-TIME": "I-DATETIME", "_": "O"}
 
+
 def convert(conll_lines):
     new_lines = []
     metadata = []
     for idx, line in enumerate(conll_lines):
         if line.startswith('#'):
             #metadata[idx] = line
-            print(line)
+            #print(line)
             continue
         elif line.startswith('-') or not line.strip():
             new_lines.append(line)
@@ -19,7 +20,6 @@ def convert(conll_lines):
             parts = line.split('\t')
             new_lines.append('\t'.join([parts[1], mapping.get(parts[-2], parts[-2])]))
     return new_lines
-
 
 
 def split_dir(in_dir, dev_perc=0.075, test_perc=0.075):
@@ -33,6 +33,7 @@ def split_dir(in_dir, dev_perc=0.075, test_perc=0.075):
     train = train[dev_first_k:]
     return train, dev, test
 
+
 doc_separator =  "-DOCSTART-      O"
 
 def cat_lines_from_all_files(infiles):
@@ -43,10 +44,12 @@ def cat_lines_from_all_files(infiles):
             lines.extend(fin.readlines())
     return lines
 
+
 def dump_lines(lines, out_fis):
     with open(out_fis, 'w', encoding='utf-8') as fout:
         for line in lines:
             fout.write(line.strip() + '\n')
+
 
 indir = sys.argv[1]
 outdir = sys.argv[2]
