@@ -3,31 +3,6 @@ name: Build
 on: [push, pull_request, release]
 
 jobs:
-    build_linux_wheels:
-      name: Build linux wheels
-      runs-on: ${{ matrix.os }}
-      strategy:
-        fail-fast: false
-        matrix:
-          os: [ubuntu-22.04]
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v2
-
-        - name: Build wheels
-          run: |
-              cd ro_legal_fl && \
-              pip install -r requirements.txt && \
-              python -m spacy project assets && \
-              python -m spacy project run either-download-embeddings && \
-              python -m spacy project run all
-
-        - name: Upload
-          uses: actions/upload-artifact@v3
-          with:
-            name: linux.whl
-            path: ro_legal_fl/packages/ro_legal_fl-0.1.0/dist/*.whl
-
     build_mac_wheels:
       name: Build Mac wheels
       runs-on: ${{ matrix.os }}
@@ -42,15 +17,40 @@ jobs:
         - name: Build wheels
           run: |
               cd ro_legal_fl && \
-              pip install -r requirements.txt && \
-              python -m spacy project assets && \
-              python -m spacy project run either-download-embeddings && \
-              python -m spacy project run all
+              pip3 install -r requirements.txt && \
+              python3 -m spacy project assets && \
+              python3 -m spacy project run either-download-embeddings && \
+              python3 -m spacy project run all
 
         - name: Upload
           uses: actions/upload-artifact@v3
           with:
             name: mac.whl
+            path: ro_legal_fl/packages/ro_legal_fl-0.1.0/dist/*.whl
+
+    build_linux_wheels:
+      name: Build linux wheels
+      runs-on: ${{ matrix.os }}
+      strategy:
+        fail-fast: false
+        matrix:
+          os: [ubuntu-22.04]
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v2
+
+        - name: Build wheels
+          run: |
+              cd ro_legal_fl && \
+              pip3 install -r requirements.txt && \
+              python3 -m spacy project assets && \
+              python3 -m spacy project run either-download-embeddings && \
+              python3 -m spacy project run all
+
+        - name: Upload
+          uses: actions/upload-artifact@v3
+          with:
+            name: linux.whl
             path: ro_legal_fl/packages/ro_legal_fl-0.1.0/dist/*.whl
 
     build_win_wheels:
@@ -66,11 +66,11 @@ jobs:
 
         - name: Build wheels
           run: |
-              cd ro_legal_fl && \
-              pip install -r requirements.txt && \
-              python -m spacy project assets && \
-              python -m spacy project run either-download-embeddings && \
-              python -m spacy project run all
+              cd ro_legal_fl && 
+              pip3 install -r requirements.txt && 
+              python3 -m spacy project assets && 
+              python3 -m spacy project run either-download-embeddings && 
+              python3 -m spacy project run all
 
         - name: Upload
           uses: actions/upload-artifact@v3
