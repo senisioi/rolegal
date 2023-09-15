@@ -4,7 +4,7 @@ on: [push, pull_request, release]
 
 jobs:
     build_mac:
-      name: Build Mac wheels
+      name: Train, evaluate and build Mac wheels
       runs-on: ${{ matrix.os }}
       strategy:
         fail-fast: false
@@ -41,7 +41,7 @@ jobs:
             path: ro_legal_fl/packages/*/dist/*.whl
 
     build_linux:
-      name: Build linux wheels
+      name: Train, evaluate and build linux wheels
       runs-on: ${{ matrix.os }}
       strategy:
         fail-fast: false
@@ -78,7 +78,7 @@ jobs:
             path: ro_legal_fl/packages/*/dist/*.whl
 
     build_windows:
-      name: Build Windows wheels
+      name: Train, evaluate and build Windows wheels
       runs-on: ${{ matrix.os }}
       strategy:
         fail-fast: false
@@ -90,7 +90,7 @@ jobs:
 
         - name: Train-eval model
           run: |
-              cd ro_legal_fl && \
+              cd ro_legal_fl && 
               pip3 install -r requirements.txt && 
               python3 scripts/set_spacy_version.py && 
               python3 -m spacy project assets && 
