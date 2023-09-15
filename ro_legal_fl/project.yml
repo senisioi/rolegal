@@ -278,6 +278,7 @@ commands:
     script:
       - "mkdir -p packages/"
       - "tar -cvf packages/model-best.tar.gz ${vars.parser_tagger_ner_best}"
+      - "ls packages/"
     deps:
       - "${vars.parser_tagger_ner_best}"
 

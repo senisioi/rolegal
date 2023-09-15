@@ -26,19 +26,27 @@ jobs:
         - name: Upload best model
           uses: actions/upload-artifact@v3
           with:
-            name: mac-model-best.tar.gz
-            path: packages/model-best.tar.gz
+            name: macos-latest-model-best.tar.gz
+            path: ro_legal_fl/packages/model-best.tar.gz
 
         - name: Build MacOS wheel
           run: |
               cd ro_legal_fl && \
-              python3 -m spacy project run wheel
+              python3 -m spacy project run wheel && \
+              tar -cvf ro_legal_fl/packages/package.tar.gz ro_legal_fl/packages/ro_legal_fl-*
 
         - name: Upload wheel
           uses: actions/upload-artifact@v3
           with:
-            name: mac.whl
+            name: ro_legal_fl_macos-latest.whl
             path: ro_legal_fl/packages/*/dist/*.whl
+
+        - name: Upload tar
+          uses: actions/upload-artifact@v3
+          with:
+            name: macos-latest-package.tar.gz
+            path: ro_legal_fl/packages/package.tar.gz
+
 
     build_linux:
       name: Train, evaluate and build linux wheels
@@ -63,22 +71,33 @@ jobs:
         - name: Upload best model
           uses: actions/upload-artifact@v3
           with:
-            name: mac-model-best.tar.gz
-            path: packages/model-best.tar.gz
+            name: ubuntu-22.04-model-best.tar.gz
+            path: ro_legal_fl/packages/model-best.tar.gz
 
         - name: Build Linux wheel
           run: |
               cd ro_legal_fl && \
-              python3 -m spacy project run wheel
+              python3 -m spacy project run wheel && \
+              tar -cvf ro_legal_fl/packages/package.tar.gz ro_legal_fl/packages/ro_legal_fl-*
 
         - name: Upload wheel
           uses: actions/upload-artifact@v3
           with:
-            name: mac.whl
+            name: ro_legal_fl_ubuntu-22.04.whl
             path: ro_legal_fl/packages/*/dist/*.whl
 
+        - name: Upload tar
+          uses: actions/upload-artifact@v3
+          with:
+            name: ubuntu-22.04-package.tar.gz
+            path: ro_legal_fl/packages/package.tar.gz
+
+
+
+
     build_windows:
-      name: Train, evaluate and build Windows wheels
+      name: [disabled] Train, evaluate and build Windows wheels
+      if: false
       runs-on: ${{ matrix.os }}
       strategy:
         fail-fast: false
@@ -111,6 +130,6 @@ jobs:
         - name: Upload wheel
           uses: actions/upload-artifact@v3
           with:
-            name: mac.whl
+            name: linux.whl
             path: ro_legal_fl/packages/*/dist/*.whl
 
