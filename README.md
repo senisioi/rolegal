@@ -1,7 +1,8 @@
 # A Spacy Package for Legal Document Processing & Other Resources
 
 
-The directory ro_legal_fl contains the full spacy project.yml and config that can be used to build ro_legal_fl spacy package. The following commands assume you are in the ro_legal_fl directory:
+This is the source code to build a spacy package with floret embeddings trained on legal documents and with legal NER capabilities.
+The directory `ro_legal_fl` contains the full spacy `project.yml` and config that can be used to build `ro_legal_fl` spacy package. The following commands assume you are in the `ro_legal_fl` directory:
 
 ```bash
 cd ro_legal_fl
