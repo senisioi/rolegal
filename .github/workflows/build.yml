@@ -93,10 +93,8 @@ jobs:
             path: ro_legal_fl/packages/package.tar.gz
 
 
-
-
     build_windows:
-      name: [disabled] Train, evaluate and build Windows wheels
+      name: Train, evaluate and build Windows wheels
       if: false
       runs-on: ${{ matrix.os }}
       strategy:
