@@ -79,7 +79,7 @@ workflows:
     - train-floret-ner
     - evaluate-ner
     - savebest
-  package:
+  wheel:
     - package
 
   all-novectors:

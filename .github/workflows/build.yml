@@ -32,7 +32,7 @@ jobs:
         - name: Build MacOS wheel
           run: |
               cd ro_legal_fl && \
-              python3 -m spacy project run package
+              python3 -m spacy project run wheel
 
         - name: Upload wheel
           uses: actions/upload-artifact@v3
@@ -69,7 +69,7 @@ jobs:
         - name: Build Linux wheel
           run: |
               cd ro_legal_fl && \
-              python3 -m spacy project run package
+              python3 -m spacy project run wheel
 
         - name: Upload wheel
           uses: actions/upload-artifact@v3
@@ -106,7 +106,7 @@ jobs:
         - name: Build Windows wheel
           run: |
               cd ro_legal_fl && 
-              python3 -m spacy project run package
+              python3 -m spacy project run wheel
 
         - name: Upload wheel
           uses: actions/upload-artifact@v3
