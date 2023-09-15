@@ -3,7 +3,7 @@ name: Build
 on: [push, pull_request, release]
 
 jobs:
-    build_mac_wheels:
+    build_mac:
       name: Build Mac wheels
       runs-on: ${{ matrix.os }}
       strategy:
@@ -14,7 +14,7 @@ jobs:
         - name: Checkout
           uses: actions/checkout@v2
 
-        - name: Build wheels
+        - name: Train-eval model
           run: |
               cd ro_legal_fl && \
               pip3 install -r requirements.txt && \
@@ -23,13 +23,24 @@ jobs:
               python3 -m spacy project run either-download-embeddings && \
               python3 -m spacy project run all
 
-        - name: Upload
+        - name: Upload best model
+          uses: actions/upload-artifact@v3
+          with:
+            name: mac-model-best.tar.gz
+            path: packages/model-best.tar.gz
+
+        - name: Build MacOS wheel
+          run: |
+              cd ro_legal_fl && \
+              python3 -m spacy project run package
+
+        - name: Upload wheel
           uses: actions/upload-artifact@v3
           with:
             name: mac.whl
             path: ro_legal_fl/packages/*/dist/*.whl
 
-    build_linux_wheels:
+    build_linux:
       name: Build linux wheels
       runs-on: ${{ matrix.os }}
       strategy:
@@ -40,7 +51,7 @@ jobs:
         - name: Checkout
           uses: actions/checkout@v2
 
-        - name: Build wheels
+        - name: Train-eval model
           run: |
               cd ro_legal_fl && \
               pip3 install -r requirements.txt && \
@@ -49,13 +60,24 @@ jobs:
               python3 -m spacy project run either-download-embeddings && \
               python3 -m spacy project run all
 
-        - name: Upload
+        - name: Upload best model
           uses: actions/upload-artifact@v3
           with:
-            name: linux.whl
+            name: mac-model-best.tar.gz
+            path: packages/model-best.tar.gz
+
+        - name: Build Linux wheel
+          run: |
+              cd ro_legal_fl && \
+              python3 -m spacy project run package
+
+        - name: Upload wheel
+          uses: actions/upload-artifact@v3
+          with:
+            name: mac.whl
             path: ro_legal_fl/packages/*/dist/*.whl
 
-    build_win_wheels:
+    build_windows:
       name: Build Windows wheels
       runs-on: ${{ matrix.os }}
       strategy:
@@ -66,17 +88,29 @@ jobs:
         - name: Checkout
           uses: actions/checkout@v2
 
-        - name: Build wheels
+        - name: Train-eval model
           run: |
-              cd ro_legal_fl && 
+              cd ro_legal_fl && \
               pip3 install -r requirements.txt && 
               python3 scripts/set_spacy_version.py && 
               python3 -m spacy project assets && 
               python3 -m spacy project run either-download-embeddings && 
               python3 -m spacy project run all
 
-        - name: Upload
+        - name: Upload best model
           uses: actions/upload-artifact@v3
           with:
-            name: win.whl
+            name: mac-model-best.tar.gz
+            path: packages/model-best.tar.gz
+
+        - name: Build Windows wheel
+          run: |
+              cd ro_legal_fl && 
+              python3 -m spacy project run package
+
+        - name: Upload wheel
+          uses: actions/upload-artifact@v3
+          with:
+            name: mac.whl
             path: ro_legal_fl/packages/*/dist/*.whl
+

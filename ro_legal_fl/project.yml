@@ -78,6 +78,8 @@ workflows:
     - init-labels-ner
     - train-floret-ner
     - evaluate-ner
+    - savebest
+  package:
     - package
 
   all-novectors:
@@ -216,9 +218,9 @@ commands:
     help: "Combine legalnero and ronec"
     script:
       - "mkdir -p assets/${vars.final_corpus_ner}"
-      - bash -c "cat assets/${vars.corpus_ner}/train.tsv assets/legalnero/train.tsv > assets/${vars.final_corpus_ner}/train.tsv"
-      - bash -c "cat assets/${vars.corpus_ner}/test.tsv assets/legalnero/test.tsv > assets/${vars.final_corpus_ner}/test.tsv"
-      - bash -c "cat assets/${vars.corpus_ner}/dev.tsv assets/legalnero/dev.tsv > assets/${vars.final_corpus_ner}/dev.tsv"
+      - "python scripts/pycat.py assets/${vars.corpus_ner}/train.tsv assets/legalnero/train.tsv assets/${vars.final_corpus_ner}/train.tsv"
+      - "python scripts/pycat.py assets/${vars.corpus_ner}/test.tsv assets/legalnero/test.tsv assets/${vars.final_corpus_ner}/test.tsv"
+      - "python scripts/pycat.py assets/${vars.corpus_ner}/dev.tsv assets/legalnero/dev.tsv assets/${vars.final_corpus_ner}/dev.tsv"
       - echo "Final corpus for ner in ${vars.final_corpus_ner}"
 
   - name: "convert-ner"
@@ -271,16 +273,26 @@ commands:
     outputs:
       - "metrics/${vars.parser_tagger_ner_dir}/metrics.json"
 
+  - name: "savebest"
+    help: "Save best model as an archive"
+    script:
+      - "mkdir -p packages/"
+      - "tar -cvf packages/model-best.tar.gz ${vars.parser_tagger_ner_best}"
+    deps:
+      - "${vars.parser_tagger_ner_best}"
+
   - name: "package"
     help: "Package the complete trained model as a pip package"
     script:
       - "mkdir -p packages/"
-      - "python -m spacy package ${vars.parser_tagger_ner_best} packages/ --force  --name ${vars.package_name_fl} --version ${vars.version} --build wheel,sdist"
+      - "python -m spacy package ${vars.parser_tagger_ner_best} packages/ --force  --name ${vars.package_name_fl} --version ${vars.version} --build wheel"
     deps:
       - "${vars.parser_tagger_ner_best}"
     outputs_no_cache:
       - "packages/${vars.package_name_fl}/"
 
+    
+      
 
 
 # train evaluate a model with no vectors
