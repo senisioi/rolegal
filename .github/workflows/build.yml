@@ -33,7 +33,7 @@ jobs:
           run: |
               cd ro_legal_fl && \
               python3 -m spacy project run wheel && \
-              tar -cvf ro_legal_fl/packages/package.tar.gz ro_legal_fl/packages/ro_legal_fl-*
+              tar -cvf packages/package.tar.gz packages/ro_legal_fl-*
 
         - name: Upload wheel
           uses: actions/upload-artifact@v3
@@ -78,7 +78,7 @@ jobs:
           run: |
               cd ro_legal_fl && \
               python3 -m spacy project run wheel && \
-              tar -cvf ro_legal_fl/packages/package.tar.gz ro_legal_fl/packages/ro_legal_fl-*
+              tar -cvf packages/package.tar.gz packages/ro_legal_fl-*
 
         - name: Upload wheel
           uses: actions/upload-artifact@v3
