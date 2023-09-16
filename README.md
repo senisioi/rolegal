@@ -1,12 +1,58 @@
 # A Spacy Package for Legal Document Processing & Other Resources
 
+[![Build](https://github.com/senisioi/rolegal/actions/workflows/build.yml/badge.svg)](https://github.com/senisioi/rolegal/actions/workflows/build.yml)
 
 This is the source code to build a spacy package with floret embeddings trained on legal documents and with legal NER capabilities.
-The directory `ro_legal_fl` contains the full spacy `project.yml` and config that can be used to build `ro_legal_fl` spacy package. The following commands assume you are in the `ro_legal_fl` directory:
+The directory `ro_legal_fl` contains the full spacy `project.yml` and config that can be used to build `ro_legal_fl` spacy package. 
+
+
+## Accuracy
+
+| Type | Score |
+|:---:|:---:|
+| `TOK` | 99.84 |
+| `TAG` | 96.27 |
+| `POS` | 97.12 |
+| `MORPH` | 96.42 |
+| `LEMMA` | 95.73 |
+| `UAS` | 89.15 |
+| `LAS` | 82.46 |
+| `SENT_P` | 94.94 |
+| `SENT_R` | 95.20 |
+| `SENT_F` | 95.07
+| `ENTS_F` | 78.35 |
+| `ENTS_P` | 79.51 |
+| `ENTS_R` | 77.23 |
+
+## NER per type
+
+|             |   P   |   R   |   F   |
+|:-----------:|:-----:|:-----:|:-----:|
+|    MONEY    | 88.52 | 72.32 | 79.61 |
+|   DATETIME  | 85.31 | 84.58 | 84.94 |
+|    PERSON   | 76.71 | 72.40 | 74.49 |
+|   QUANTITY  | 89.27 | 84.55 | 86.85 |
+|   NUMERIC   | 86.53 | 81.72 | 84.06 |
+|    LEGAL    | 71.24 | 83.85 | 77.03 |
+|     ORG     | 69.24 | 71.96 | 70.58 |
+|   ORDINAL   | 89.14 | 89.14 | 89.14 |
+|    PERIOD   | 84.39 | 74.11 | 78.92 |
+| NAT_REL_POL | 85.09 | 77.46 | 81.10 |
+|     GPE     | 81.95 | 82.75 | 82.35 |
+| WORK_OF_ART | 39.15 | 28.14 | 32.74 |
+|     LOC     | 55.28 | 52.35 | 53.78 |
+|    EVENT    | 54.89 | 43.20 | 48.34 |
+|   LANGUAGE  | 80.28 | 78.08 | 79.17 |
+|   FACILITY  | 60.14 | 47.98 | 53.38 |
+
+
+
+The commands belwo assume you are in the `ro_legal_fl` directory:
 
 ```bash
 cd ro_legal_fl
 ```
+
 
 
 ## Install Requirements and Compile floret
@@ -66,8 +112,12 @@ The results show a robust response where several versions of the word appear hig
 
 To build the spaCy package, in the same directory run the following two commands:
 ```bash
+# to download the data and depdendencies
 python -m spacy project assets
+# to train-evaluate a model
 python -m spacy project run all
+# to package it
+python -m spacy project run package
 ```
 
 The first command will download the necessary assets:
@@ -96,7 +146,7 @@ This will take a lot of time, so please be patient. At the end, in the packages 
 
 
 
-## Resources
+## Repository Resources
 
 This repository contains two datasets:
 
