@@ -18,6 +18,10 @@ This is a spacy language model for **noisy Romanian legal documents** with flore
 The embeddings are trained using [MARCELL Romanian legislative corpus](https://marcell-project.eu/deliverables.html) consisting in 160K documents available at https://legislatie.just.ro and released by the Research Institute for Artificial Intelligence of the Romanian Academy. We preprocessed the corpus, removed short sentences, standardized diacritics, tokenized words using an empty spaCy model for Romanian, and dumped every document into a single large file publicly available for download [available here]( https://github.com/scrapperorg/nlp-resources/releases/download/legal_corpus_v1/MARCELL_Corpus_cln_tok.tar.gz).
 
 
+<br>
+<br>
+<br>
+
 <a name="usage"></a> 
 ## Usage
 
