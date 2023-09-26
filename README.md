@@ -5,6 +5,7 @@
 
 
 ### Contents
+- [Usage](#usage)
 - [Training Data](#data)
 - [Model Evaluation](#eval)
 - [Building a Package from Scratch](#build)
@@ -17,7 +18,8 @@ This is a spacy language model for **noisy Romanian legal documents** with flore
 It uses [MARCELL Romanian legislative corpus](https://marcell-project.eu/deliverables.html) consisting in 160K documents available at https://legislatie.just.ro and released by the Research Institute for Artificial Intelligence of the Romanian Academy. We have preprocessed the corpus, removed short sentences, standardized diacritics, tokenized words using an empty spaCy model for Romanian, and dumped every document into a single large file publicly available for download [available here]( https://github.com/scrapperorg/nlp-resources/releases/download/legal_corpus_v1/MARCELL_Corpus_cln_tok.tar.gz). The cleaned corpus is tokenized with an empty Romanian spaCy language.
 
 
-### Usage
+<a name="usage"></a> 
+## Usage
 
 To use the spacy language model right away, install the released version:
 ```bash
@@ -33,12 +35,16 @@ doc = nlp("Titlul III din LEGEA nr. 255 din 19 iulie 2013, publicată în MONITO
 
 # legal entity identification
 for entity in doc.ents:
-    print('entity: ', entity, '; entity type: ' entity.label_)
-
+    print('entity: ', entity, '; entity type: ', entity.label_)
+# entity:  III ; entity type:  NUMERIC
+# entity:  LEGEA nr. 255 din 19 iulie 2013 ; entity type:  LEGAL
+# entity:  MONITORUL OFICIAL ; entity type:  ORG
 
 # floret n-gram embeddings robust to typos
 print(nlp('achizit1e public@').similarity(nlp('achiziții publice')))
+# 0.7393895566928835
 print(nlp('achizitii publice').similarity(nlp('achiziții publice')))
+# 0.8996480808279399
 ```
 
 
