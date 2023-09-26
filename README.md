@@ -1,4 +1,4 @@
-# A Spacy Package for Noisy Legal Document Processing & Other Resources
+# A Spacy Package for Romanian Legal Document Processing & Other Resources
 
 [![Build](https://github.com/senisioi/rolegal/actions/workflows/build.yml/badge.svg)](https://github.com/senisioi/rolegal/actions/workflows/build.yml) [![PyPI version](https://badge.fury.io/py/ro-legal-fl.svg)](https://badge.fury.io/py/ro-legal-fl)
 
@@ -11,10 +11,10 @@
 - [Other Resources](#resources)
 
 
-<img align="left" width="222" height="222" src="https://github.com/senisioi/rolegal/blob/main/img/paper.jpeg?raw=true">
+<img align="left" width="250" height="250" src="https://github.com/senisioi/rolegal/blob/main/img/paper.jpeg?raw=true">
 
-This is a spacy language model for Romanian legal domain with floret n-gram embeddings and `LEGAL` entity recognition.
-It uses [MARCELL Romanian legislative corpus](https://marcell-project.eu/deliverables.html) which consists almost the entire set of legal documents available in https://legislatie.just.ro, in total around 160K documents, released by the Research Institute for Artificial Intelligence of the Romanian Academy. We have preprocessed the corpus, removed short sentences, standardized diacritics, tokenized words using an empty spaCy model for Romanian, and dumped every document into a single large file publicly available for download [available here]( https://github.com/scrapperorg/nlp-resources/releases/download/legal_corpus_v1/MARCELL_Corpus_cln_tok.tar.gz). The cleaned corpus is tokenized with an empty Romanian spaCy language.
+This is a spacy language model for **noisy Romanian legal documents** with floret n-gram embeddings and `LEGAL` entity recognition.
+It uses [MARCELL Romanian legislative corpus](https://marcell-project.eu/deliverables.html) consisting in 160K documents available at https://legislatie.just.ro and released by the Research Institute for Artificial Intelligence of the Romanian Academy. We have preprocessed the corpus, removed short sentences, standardized diacritics, tokenized words using an empty spaCy model for Romanian, and dumped every document into a single large file publicly available for download [available here]( https://github.com/scrapperorg/nlp-resources/releases/download/legal_corpus_v1/MARCELL_Corpus_cln_tok.tar.gz). The cleaned corpus is tokenized with an empty Romanian spaCy language.
 
 
 ### Usage
