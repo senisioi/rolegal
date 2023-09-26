@@ -14,7 +14,7 @@
 <img align="left" width="222" height="222" src="https://github.com/senisioi/rolegal/blob/main/img/paper.jpeg?raw=true">
 
 This is a spacy language model for Romanian legal domain with floret n-gram embeddings and `LEGAL` entity recognition.
-It uses [MARCELL Romanian legislative corpus](https://marcell-project.eu/deliverables.html) which consists almost the entire set of legal documents available in https://legislatie.just.ro, in total around 160K documents. The corpus has been publicly released by the Research Institute for Artificial Intelligence "Mihai Draganescu" of the Romanian Academy. We have preprocessed the corpus, removed short sentences, standardized diacritics, tokenized words using an empty spaCy model for Romanian, and dumped every document into a single large file publicly available for download [available here]( https://github.com/scrapperorg/nlp-resources/releases/download/legal_corpus_v1/MARCELL_Corpus_cln_tok.tar.gz). The cleaned corpus is tokenized with an empty Romanian spaCy language.
+It uses [MARCELL Romanian legislative corpus](https://marcell-project.eu/deliverables.html) which consists almost the entire set of legal documents available in https://legislatie.just.ro, in total around 160K documents, released by the Research Institute for Artificial Intelligence of the Romanian Academy. We have preprocessed the corpus, removed short sentences, standardized diacritics, tokenized words using an empty spaCy model for Romanian, and dumped every document into a single large file publicly available for download [available here]( https://github.com/scrapperorg/nlp-resources/releases/download/legal_corpus_v1/MARCELL_Corpus_cln_tok.tar.gz). The cleaned corpus is tokenized with an empty Romanian spaCy language.
 
 
 ### Usage
