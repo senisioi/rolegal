@@ -11,13 +11,31 @@
 
 
 This is a spacy language model for Romanian legal domain with floret n-gram embeddings and `LEGAL` entity recognition.
-We use [MARCELL Romanian legislative corpus](https://marcell-project.eu/deliverables.html) which consists almost the entire set of legal documents available in https://legislatie.just.ro, in total around 160K documents. The corpus has been publicly released by the Research Institute for Artificial Intelligence "Mihai Draganescu" of the Romanian Academy. We have preprocessed the corpus, removed short sentences, standardized diacritics, tokenized words using an empty spaCy model for Romanian, and dumped every document into a single large file publicly available for download [available here]( https://github.com/scrapperorg/nlp-resources/releases/download/legal_corpus_v1/MARCELL_Corpus_cln_tok.tar.gz). We are using our own version for training word representations because of its clean shape and the tokenization is compatible with spaCy pipelines that are going to be trained on top of these embeddings.
+It uses [MARCELL Romanian legislative corpus](https://marcell-project.eu/deliverables.html) which consists almost the entire set of legal documents available in https://legislatie.just.ro, in total around 160K documents. The corpus has been publicly released by the Research Institute for Artificial Intelligence "Mihai Draganescu" of the Romanian Academy. We have preprocessed the corpus, removed short sentences, standardized diacritics, tokenized words using an empty spaCy model for Romanian, and dumped every document into a single large file publicly available for download [available here]( https://github.com/scrapperorg/nlp-resources/releases/download/legal_corpus_v1/MARCELL_Corpus_cln_tok.tar.gz). We are using our own version for training word representations because of its clean shape and the tokenization is compatible with spaCy pipelines that are going to be trained on top of these embeddings.
 
 
 To use the spacy language model right away, install the released version:
 ```bash
 pip install ro-legal-fl
 ```
+
+Example:
+```python
+import spacy
+nlp = spacy.load("ro_legal_fl")
+
+doc = nlp("Titlul III din LEGEA nr. 255 din 19 iulie 2013, publicată în MONITORUL OFICIAL")
+
+# legal entity identification
+for entity in doc.ents:
+    print('entity: ', entity, '; entity type: ' entity.label_)
+
+
+# floret n-gram embeddings robust to typos
+print(nlp('achizit1e public@').similarity(nlp('achiziții publice')))
+print(nlp('achizitii publice').similarity(nlp('achiziții publice')))
+```
+
 
 
 <a name="data"></a> 
