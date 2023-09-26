@@ -1,9 +1,17 @@
 # A Spacy Package for Legal Document Processing & Other Resources
 
-[![Build](https://github.com/senisioi/rolegal/actions/workflows/build.yml/badge.svg)](https://github.com/senisioi/rolegal/actions/workflows/build.yml) [![PyPI version](https://badge.fury.io/py/ro-legal-fl.svg)](https://badge.fury.io/py/ro-legal-fl) 
+[![Build](https://github.com/senisioi/rolegal/actions/workflows/build.yml/badge.svg)](https://github.com/senisioi/rolegal/actions/workflows/build.yml) [![PyPI version](https://badge.fury.io/py/ro-legal-fl.svg)](https://badge.fury.io/py/ro-legal-fl)
 
-This is the source code to build a spacy package with floret embeddings trained on legal documents and with legal NER capabilities.
-The directory `ro_legal_fl` contains the full spacy `project.yml` and config that can be used to build `ro_legal_fl` spacy package. 
+
+#### Contents
+- [Training Data](#data)
+- [Model Evaluation](#eval)
+- [Building a Package from Scratch](#build)
+- [Other Resources](#resources)
+
+
+This is a spacy language model for Romanian legal domain with floret n-gram embeddings and `LEGAL` entity recognition.
+We use [MARCELL Romanian legislative corpus](https://marcell-project.eu/deliverables.html) which consists almost the entire set of legal documents available in https://legislatie.just.ro, in total around 160K documents. The corpus has been publicly released by the Research Institute for Artificial Intelligence "Mihai Draganescu" of the Romanian Academy. We have preprocessed the corpus, removed short sentences, standardized diacritics, tokenized words using an empty spaCy model for Romanian, and dumped every document into a single large file publicly available for download [available here]( https://github.com/scrapperorg/nlp-resources/releases/download/legal_corpus_v1/MARCELL_Corpus_cln_tok.tar.gz). We are using our own version for training word representations because of its clean shape and the tokenization is compatible with spaCy pipelines that are going to be trained on top of these embeddings.
 
 
 To use the spacy language model right away, install the released version:
@@ -12,7 +20,84 @@ pip install ro-legal-fl
 ```
 
 
+<a name="data"></a> 
+## Training Data
 
+The following data is used for training:
+1. [Romanian universal dependency treebank annotations](https://github.com/UniversalDependencies) to train parsers, part of speech taggers, and lemmatizers; this dataset is essential for training a model that can identify different morphological forms of the same word (e.g., achizitii, achizitie, achizitia etc.) which depend strongly on the part of speech the word has in the particular context; combining this data with the embeddings trained previously on MARCELL corpus will result in a more robust model for legal document processing
+2. [LegalNERo corpus](https://zenodo.org/record/7025333/) released by the Research Institute for Artificial Intelligence "Mihai Draganescu" of the Romanian Academy that contains Named Entity annotations for different entity types: Legal, Persons, Locations, Organizations, and Time entities; useful to increase the model’s robustness to legal documents and to be able to identify mentions to legal acts as entities.
+3. [RoNEC corpus]( https://github.com/dumitrescustefan/ronec) or Romanian Named Entity corpus; useful to identify Persons, Organizations and several other entities in documents. Currently, at version 2.0, holds 12330 sentences with over 0.5M tokens, annotated with 15 classes, to a total of 80.283 distinctly annotated entities.
+
+
+| Feature | Description |
+| --- | --- |
+| **Name** | `ro_legal_fl` |
+| **Version** | `3.6.1` - fixed with spacy version|
+| **spaCy** | `>=3.6.1,<3.7.0` |
+| **Default Pipeline** | `tok2vec`, `tagger`, `morphologizer`, `parser`, `lemmatizer`, `attribute_ruler`, `ner` |
+| **Components** | `tok2vec`, `tagger`, `morphologizer`, `parser`, `lemmatizer`, `attribute_ruler`, `ner` |
+| **Vectors** | -1 keys, 100000 unique vectors (280 dimensions) |
+| **Sources** | MARCELL legislative corpus, LegalNeRo, RoNEC |
+| **License** | CC4R https://constantvzw.org/wefts/cc4r.en.html |
+| **Author** | [Sergiu Nisioi](sergiu.nisioi@unibuc.ro) |
+
+
+
+<a name="eval"></a> 
+## Model Evaluation
+The evaluation of the legal spacy model is not directly comparable with other models for Romanian because we used a different training set, a different domain, and a completely different test set. We copy in the table below the values of the language model released by spaCy on generic Romanian language called ro_core_news_lg1 only to present a rough comparison with the evaluation scores of our model on the legal domain:
+
+|           Metric          |           Description                                                   |             ro-core-news-lg         |              ro-legal-fl          |
+|-------------|--------------------------------------------------------|----------------|-----------|
+|           TOKEN_ACC        |              Tokenization            accuracy                                        |           1.00                 |              1.00            |
+|           TAG_ACC            |            Part-of-speech          tags (fine grained tags, Token.tag)            |            0.97                 |              0.96            |
+|           SENTS_P            |            Sentence            segmentation (precision)                            |           0.97                 |              0.95            |
+|           SENTS_R            |            Sentence            segmentation (recall)                              |            0.97                 |              0.96            |
+|           SENTS_F            |            Sentence            segmentation (F-score)                            |             0.97                 |              0.96            |
+|           DEP_UAS            |            Unlabeled           dependencies                                       |            0.89                 |              0.89            |
+|           DEP_LAS            |            Labeled             dependencies                                         |              0.84                 |              0.83            |
+|           LEMMA_ACC        |              Lemmatization                                               |           0.96                 |              0.96            |
+|           POS_ACC            |            Part-of-speech          tags (coarse grained tags, Token.pos)        |              0.94                 |              0.97            |
+|           MORPH_ACC        |              Morphological           analysis                                       |            0.95                 |              0.96            |
+
+
+NER scores are reported in the following table:
+
+|               Metric           |                  Description                                   |                 Ro-Core-News             |                      RoLegal              |
+|----------|------------------------------------|----------------|---------------|
+|               ENTS_P           |                        Named                 entities (precision)             |                  0.75                     |                  0.79                    |
+|               ENTS_R           |                   Named              entities (recall)                    |                  0.77                     |                  0.76                    |
+|               ENTS_F           |                      Named               entities (F-score)               |                  0.76                     |                  0.77                    |
+
+
+### NER per type
+
+Below are the evaluation metrics per entity type. The results are consistent with [exiting published data on legal entity detection](https://aclanthology.org/2021.nllp-1.2.pdf)
+
+|             |   P   |   R   |   F   |
+|:-----------:|:-----:|:-----:|:-----:|
+|    MONEY    | 88.52 | 72.32 | 79.61 |
+|   DATETIME  | 85.31 | 84.58 | 84.94 |
+|    PERSON   | 76.71 | 72.40 | 74.49 |
+|   QUANTITY  | 89.27 | 84.55 | 86.85 |
+|   NUMERIC   | 86.53 | 81.72 | 84.06 |
+|    LEGAL    | 71.24 | 83.85 | 77.03 |
+|     ORG     | 69.24 | 71.96 | 70.58 |
+|   ORDINAL   | 89.14 | 89.14 | 89.14 |
+|    PERIOD   | 84.39 | 74.11 | 78.92 |
+| NAT_REL_POL | 85.09 | 77.46 | 81.10 |
+|     GPE     | 81.95 | 82.75 | 82.35 |
+| WORK_OF_ART | 39.15 | 28.14 | 32.74 |
+|     LOC     | 55.28 | 52.35 | 53.78 |
+|    EVENT    | 54.89 | 43.20 | 48.34 |
+|   LANGUAGE  | 80.28 | 78.08 | 79.17 |
+|   FACILITY  | 60.14 | 47.98 | 53.38 |
+
+
+
+
+
+<a name="build"></a> 
 ## Building a spacy Package from Scratch
 
 The commands below assume you are in the `ro_legal_fl` directory:
@@ -113,6 +198,7 @@ This will take a lot of time, so please be patient. At the end, in the packages 
 
 
 
+<a name="resources"></a> 
 ## Repository Resources
 
 This repository contains two datasets:
