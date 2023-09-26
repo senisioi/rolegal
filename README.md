@@ -1,14 +1,17 @@
-# A Spacy Package for Legal Document Processing & Other Resources
+# A Spacy Package for Noisy Legal Document Processing & Other Resources
 
 [![Build](https://github.com/senisioi/rolegal/actions/workflows/build.yml/badge.svg)](https://github.com/senisioi/rolegal/actions/workflows/build.yml) [![PyPI version](https://badge.fury.io/py/ro-legal-fl.svg)](https://badge.fury.io/py/ro-legal-fl)
 
 
-#### Contents
+
+### Contents
 - [Training Data](#data)
 - [Model Evaluation](#eval)
 - [Building a Package from Scratch](#build)
 - [Other Resources](#resources)
 
+
+<img align="left" width="100" height="100" src="https://github.com/senisioi/rolegal/blob/main/img/paper.jpeg?raw=true">
 
 This is a spacy language model for Romanian legal domain with floret n-gram embeddings and `LEGAL` entity recognition.
 It uses [MARCELL Romanian legislative corpus](https://marcell-project.eu/deliverables.html) which consists almost the entire set of legal documents available in https://legislatie.just.ro, in total around 160K documents. The corpus has been publicly released by the Research Institute for Artificial Intelligence "Mihai Draganescu" of the Romanian Academy. We have preprocessed the corpus, removed short sentences, standardized diacritics, tokenized words using an empty spaCy model for Romanian, and dumped every document into a single large file publicly available for download [available here]( https://github.com/scrapperorg/nlp-resources/releases/download/legal_corpus_v1/MARCELL_Corpus_cln_tok.tar.gz). We are using our own version for training word representations because of its clean shape and the tokenization is compatible with spaCy pipelines that are going to be trained on top of these embeddings.
