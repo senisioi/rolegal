@@ -11,11 +11,13 @@
 - [Other Resources](#resources)
 
 
-<img align="left" width="200" height="200" src="https://github.com/senisioi/rolegal/blob/main/img/paper.jpeg?raw=true">
+<img align="left" width="222" height="222" src="https://github.com/senisioi/rolegal/blob/main/img/paper.jpeg?raw=true">
 
 This is a spacy language model for Romanian legal domain with floret n-gram embeddings and `LEGAL` entity recognition.
-It uses [MARCELL Romanian legislative corpus](https://marcell-project.eu/deliverables.html) which consists almost the entire set of legal documents available in https://legislatie.just.ro, in total around 160K documents. The corpus has been publicly released by the Research Institute for Artificial Intelligence "Mihai Draganescu" of the Romanian Academy. We have preprocessed the corpus, removed short sentences, standardized diacritics, tokenized words using an empty spaCy model for Romanian, and dumped every document into a single large file publicly available for download [available here]( https://github.com/scrapperorg/nlp-resources/releases/download/legal_corpus_v1/MARCELL_Corpus_cln_tok.tar.gz). We are using our own version for training word representations because of its clean shape and the tokenization is compatible with spaCy pipelines that are going to be trained on top of these embeddings.
+It uses [MARCELL Romanian legislative corpus](https://marcell-project.eu/deliverables.html) which consists almost the entire set of legal documents available in https://legislatie.just.ro, in total around 160K documents. The corpus has been publicly released by the Research Institute for Artificial Intelligence "Mihai Draganescu" of the Romanian Academy. We have preprocessed the corpus, removed short sentences, standardized diacritics, tokenized words using an empty spaCy model for Romanian, and dumped every document into a single large file publicly available for download [available here]( https://github.com/scrapperorg/nlp-resources/releases/download/legal_corpus_v1/MARCELL_Corpus_cln_tok.tar.gz). The cleaned corpus is tokenized with an empty Romanian spaCy language.
 
+
+### Usage
 
 To use the spacy language model right away, install the released version:
 ```bash
