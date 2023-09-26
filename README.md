@@ -1,61 +1,28 @@
 # A Spacy Package for Legal Document Processing & Other Resources
 
-[![Build](https://github.com/senisioi/rolegal/actions/workflows/build.yml/badge.svg)](https://github.com/senisioi/rolegal/actions/workflows/build.yml)
+[![Build](https://github.com/senisioi/rolegal/actions/workflows/build.yml/badge.svg)](https://github.com/senisioi/rolegal/actions/workflows/build.yml) [![PyPI version](https://badge.fury.io/py/ro-legal-fl.svg)](https://badge.fury.io/py/ro-legal-fl) 
 
 This is the source code to build a spacy package with floret embeddings trained on legal documents and with legal NER capabilities.
 The directory `ro_legal_fl` contains the full spacy `project.yml` and config that can be used to build `ro_legal_fl` spacy package. 
 
 
-## Accuracy
-
-| Type | Score |
-|:---:|:---:|
-| `TOK` | 99.84 |
-| `TAG` | 96.27 |
-| `POS` | 97.12 |
-| `MORPH` | 96.42 |
-| `LEMMA` | 95.73 |
-| `UAS` | 89.15 |
-| `LAS` | 82.46 |
-| `SENT_P` | 94.94 |
-| `SENT_R` | 95.20 |
-| `SENT_F` | 95.07
-| `ENTS_F` | 78.35 |
-| `ENTS_P` | 79.51 |
-| `ENTS_R` | 77.23 |
-
-## NER per type
-
-|             |   P   |   R   |   F   |
-|:-----------:|:-----:|:-----:|:-----:|
-|    MONEY    | 88.52 | 72.32 | 79.61 |
-|   DATETIME  | 85.31 | 84.58 | 84.94 |
-|    PERSON   | 76.71 | 72.40 | 74.49 |
-|   QUANTITY  | 89.27 | 84.55 | 86.85 |
-|   NUMERIC   | 86.53 | 81.72 | 84.06 |
-|    LEGAL    | 71.24 | 83.85 | 77.03 |
-|     ORG     | 69.24 | 71.96 | 70.58 |
-|   ORDINAL   | 89.14 | 89.14 | 89.14 |
-|    PERIOD   | 84.39 | 74.11 | 78.92 |
-| NAT_REL_POL | 85.09 | 77.46 | 81.10 |
-|     GPE     | 81.95 | 82.75 | 82.35 |
-| WORK_OF_ART | 39.15 | 28.14 | 32.74 |
-|     LOC     | 55.28 | 52.35 | 53.78 |
-|    EVENT    | 54.89 | 43.20 | 48.34 |
-|   LANGUAGE  | 80.28 | 78.08 | 79.17 |
-|   FACILITY  | 60.14 | 47.98 | 53.38 |
+To use the spacy language model right away, install the released version:
+```bash
+pip install ro-legal-fl
+```
 
 
 
-The commands belwo assume you are in the `ro_legal_fl` directory:
+## Building a spacy Package from Scratch
+
+The commands below assume you are in the `ro_legal_fl` directory:
 
 ```bash
 cd ro_legal_fl
 ```
 
 
-
-## Install Requirements and Compile floret
+### Install Requirements and Compile floret
 ```bash
 pip install -r requirements.txt
 
@@ -66,7 +33,7 @@ make
 
 ```
 
-## Building floret Embedding for Romanian Legal Documents
+### Building floret Embedding for Romanian Legal Documents
 The training uses continuous bag of words  with subwords ranging between 4 and 5 characters, 2 hashes per entry, and a compact table of 100K entries. The configuration for training embeddings is defined in project.yml. Before proceeding with the training, floret must be compiled and installed on the machine where training will take place.
 
 To train embeddings from scratch, one has to be in the directory of the project, have floret and spacy and then run the following command:
@@ -75,14 +42,14 @@ python -m spacy project run either-train-embeddings
 ```
 Which will run several shell scripts defined in `project.yml` to download the corpus and start floret training. If the user does not want to train embeddings from scratch, but use the ones that we release within a spaCy package, then they may execute the following command instead: `python -m spacy project run either-download-embeddings`.
 
-## Downloading pre-trained floret Embeddigns for Romanian
+### Downloading pre-trained floret Embeddigns for Romanian
 We provide pre-trained embeddings that can be used with the pipeline. The embeddings are downloaded with the assets:
 ```bash
 python -m spacy project assets
 python -m spacy project run either-download-embeddings
 ```
 
-### Example of using floret nearest-neighbors
+#### Example of using floret nearest-neighbors
 An example of using floret vectors to identify similar legal terms can be visible in the following box. 
 
 ```bash
@@ -108,7 +75,7 @@ An example of using floret vectors to identify similar legal terms can be visibl
 The results show a robust response where several versions of the word appear highly similar, including terms containing the slash sign after tokenization.
 
 
-## Building a Complete spaCy Package for Legal Documents
+### Building a Complete spaCy Package for Legal Documents
 
 To build the spaCy package, in the same directory run the following two commands:
 ```bash
@@ -150,7 +117,7 @@ This will take a lot of time, so please be patient. At the end, in the packages 
 
 This repository contains two datasets:
 
-### 1. Historical Public Procurement Legislation (PPL)
+#### 1. Historical Public Procurement Legislation (PPL)
 
 This dataset consist in an archive that containes raw scraped documents covering PPL. And a .csv file containing the metadata for each file in the archive: published year, month, header, source URL, type (if primary or secondary).
 

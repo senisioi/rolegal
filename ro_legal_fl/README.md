@@ -1,4 +1,4 @@
-# A Spacy Package for Legal Document Processing
+# A Spacy Package for Romanian Legal Document Processing
 
 To build the package, see the README from the above directory.
 
