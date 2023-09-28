@@ -96,7 +96,7 @@ The evaluation of the legal spaCy model is not directly comparable with other mo
 
 NER scores are reported in the following table:
 
-|               Metric           |                  Description                                   |                 Ro-Core-News             |                      RoLegal              |
+|               Metric           |                  Description                                   |                 ro-core-news-lg             |                      ro-legal-fl              |
 |----------|------------------------------------|----------------|---------------|
 |               ENTS_P           |                        Named                 entities (precision)             |                  0.75                     |                  0.79                    |
 |               ENTS_R           |                   Named              entities (recall)                    |                  0.77                     |                  0.76                    |
