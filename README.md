@@ -1,7 +1,6 @@
 # A spaCy Package for Romanian Legal Document Processing & Other Resources
 
-[![Build](https://github.com/senisioi/rolegal/actions/workflows/build.yml/badge.svg)](https://github.com/senisioi/rolegal/actions/workflows/build.yml) [![PyPI version](https://badge.fury.io/py/ro-legal-fl.svg)](https://badge.fury.io/py/ro-legal-fl)
-
+[![Build](https://github.com/senisioi/rolegal/actions/workflows/build.yml/badge.svg)](https://github.com/senisioi/rolegal/actions/workflows/build.yml) [![PyPI version](https://badge.fury.io/py/ro-legal-fl.svg)](https://badge.fury.io/py/ro-legal-fl) [![License: CC4r \*](https://raw.githubusercontent.com/senisioi/rolegal/main/img/cc4r.svg)](https://constantvzw.org/wefts/cc4r.en.html)
 
 
 ### Contents
