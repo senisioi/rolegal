@@ -1,4 +1,4 @@
-# A Spacy Package for Romanian Legal Document Processing & Other Resources
+# A spaCy Package for Romanian Legal Document Processing & Other Resources
 
 [![Build](https://github.com/senisioi/rolegal/actions/workflows/build.yml/badge.svg)](https://github.com/senisioi/rolegal/actions/workflows/build.yml) [![PyPI version](https://badge.fury.io/py/ro-legal-fl.svg)](https://badge.fury.io/py/ro-legal-fl)
 
@@ -14,8 +14,8 @@
 
 <img align="left" width="250" height="250" src="https://github.com/senisioi/rolegal/blob/main/img/paper.jpeg?raw=true">
 
-This is a spacy language model for **noisy Romanian legal documents** with floret n-gram embeddings and `LEGAL` entity recognition.
-The embeddings are trained using [MARCELL Romanian legislative corpus](https://marcell-project.eu/deliverables.html) consisting in 160K documents available at https://legislatie.just.ro and released by the Research Institute for Artificial Intelligence of the Romanian Academy. We preprocessed the corpus, removed short sentences, standardized diacritics, tokenized words using an empty spaCy model for Romanian, and dumped every document into a single large file publicly available for download [available here]( https://github.com/scrapperorg/nlp-resources/releases/download/legal_corpus_v1/MARCELL_Corpus_cln_tok.tar.gz).
+This is a spaCy language model for **noisy Romanian legal documents** with floret n-gram embeddings and `LEGAL` entity recognition.
+The embeddings are trained using [MARCELL Romanian legislative corpus](https://marcell-project.eu/deliverables.html) consisting in 160K documents available at https://legislatie.just.ro and released by the Research Institute for Artificial Intelligence of the Romanian Academy. We preprocessed the corpus, removed short sentences, standardized diacritics, tokenized words using an empty spaCy model for Romanian, and dumped every document into a single large file publicly available for download [available here]( https://github.com/scrapperorg/nlp-resources/releases/download/legal_corpus_v1/MARCELL_Corpus_cln_tok.tar.gz). Also available in [spaCy universe](https://spacy.io/universe/project/rolegal).
 
 
 <br>
@@ -23,9 +23,9 @@ The embeddings are trained using [MARCELL Romanian legislative corpus](https://m
 <br>
 
 <a name="usage"></a> 
-## Usage
+### Usage
 
-To use the spacy language model right away, install the released version:
+To use the spaCy language model right away, install the released version:
 ```bash
 pip install ro-legal-fl
 ```
@@ -57,9 +57,10 @@ print(nlp('achizitii publice').similarity(nlp('achiziții publice')))
 ## Training Data
 
 The following data is used for training:
+1. A clean version of [MARCELL Romanian legislative corpus](https://marcell-project.eu/deliverables.html) used to train floret embeddings using hashing bucket size: 100000, vector dimensions: 280, 4-grams and 5-grams of characters
 1. [Romanian universal dependency treebank annotations](https://github.com/UniversalDependencies) to train parsers, part of speech taggers, and lemmatizers; this dataset is essential for training a model that can identify different morphological forms of the same word (e.g., achizitii, achizitie, achizitia etc.) which depend strongly on the part of speech the word has in the particular context; combining this data with the embeddings trained previously on MARCELL corpus will result in a more robust model for legal document processing
-2. [LegalNERo corpus](https://zenodo.org/record/7025333/) released by the Research Institute for Artificial Intelligence "Mihai Draganescu" of the Romanian Academy that contains Named Entity annotations for different entity types: Legal, Persons, Locations, Organizations, and Time entities; useful to increase the model’s robustness to legal documents and to be able to identify mentions to legal acts as entities.
-3. [RoNEC corpus]( https://github.com/dumitrescustefan/ronec) or Romanian Named Entity corpus; useful to identify Persons, Organizations and several other entities in documents. Currently, at version 2.0, holds 12330 sentences with over 0.5M tokens, annotated with 15 classes, to a total of 80.283 distinctly annotated entities.
+1. [LegalNERo corpus](https://zenodo.org/record/7025333/) released by the Research Institute for Artificial Intelligence "Mihai Draganescu" of the Romanian Academy that contains Named Entity annotations for different entity types: Legal, Persons, Locations, Organizations, and Time entities; useful to increase the model’s robustness to legal documents and to be able to identify mentions to legal acts as entities.
+1. [RoNEC corpus]( https://github.com/dumitrescustefan/ronec) or Romanian Named Entity corpus; useful to identify Persons, Organizations and several other entities in documents. Currently, at version 2.0, holds 12330 sentences with over 0.5M tokens, annotated with 15 classes, to a total of 80.283 distinctly annotated entities.
 
 
 | Feature | Description |
@@ -78,7 +79,7 @@ The following data is used for training:
 
 <a name="eval"></a> 
 ## Model Evaluation
-The evaluation of the legal spacy model is not directly comparable with other models for Romanian because we used a different training set, a different domain, and a completely different test set. We copy in the table below the values of the language model released by spaCy on generic Romanian language called ro_core_news_lg1 only to present a rough comparison with the evaluation scores of our model on the legal domain:
+The evaluation of the legal spaCy model is not directly comparable with other models for Romanian because we used a different training set, a different domain, and a completely different test set. We copy in the table below the values of the language model released by spaCy on generic Romanian language called ro_core_news_lg1 only to present a rough comparison with the evaluation scores of our model on the legal domain:
 
 |           Metric          |           Description                                                   |             ro-core-news-lg         |              ro-legal-fl          |
 |-------------|--------------------------------------------------------|----------------|-----------|
@@ -131,7 +132,7 @@ Below are the evaluation metrics per entity type. The results are consistent wit
 
 
 <a name="build"></a> 
-## Building a spacy Package from Scratch
+## Building a spaCy Package from Scratch
 
 The commands below assume you are in the `ro_legal_fl` directory:
 
@@ -154,7 +155,7 @@ make
 ### Building floret Embedding for Romanian Legal Documents
 The training uses continuous bag of words  with subwords ranging between 4 and 5 characters, 2 hashes per entry, and a compact table of 100K entries. The configuration for training embeddings is defined in project.yml. Before proceeding with the training, floret must be compiled and installed on the machine where training will take place.
 
-To train embeddings from scratch, one has to be in the directory of the project, have floret and spacy and then run the following command:
+To train embeddings from scratch, one has to be in the directory of the project, have floret and spaCy and then run the following command:
 ```bash
 python -m spacy project run either-train-embeddings
 ```
@@ -221,7 +222,7 @@ The second command will run the training pipeline where each action is defined i
 6.	convert LegalNERo to conllup format
 7.	convert RoNEC to conllup format
 8.	combine the two named entity recognition corpora into a single file
-9.	convert the combined file into spacy binary format
+9.	convert the combined file into spaCy binary format
 10.	prediction entity labels using the configuration defined in configs/ro_legal.cfg
 11.	train named entity recognizer using the data created
 12.	evaluate the model on the test set
